@@ -1,7 +1,8 @@
 <div style="display:none;visibility:hidden;">
 <%= @address_list %>
 </div>
-<h1><small>Welcome, <%= session[:user]["username"]  %></small></h1>
+<h1><small>Welcome, <%= session[:user]["username"]  %>&nbsp;
+	<h5 style="display:inline;"><a href="/signout">退出登陆</a></h5></small></h1>
 
 <table class="table">
 	<thead>
@@ -106,6 +107,10 @@
 			event.preventDefault();
 			var objectId = $(this).prev('input[type=hidden]').val();
 			$('#editModel #objectId').val(objectId);
+			var cells = $(this).closest('tr').find('td');
+			$('#editModel #name').val(cells[1].innerHTML);
+			$('#editModel #email').val(cells[2].innerHTML);
+			$('#editModel #cellphone').val(cells[3].innerHTML);
 		});
 		$('.deleteModelBtn').on('click',function(event){
 			event.preventDefault();
