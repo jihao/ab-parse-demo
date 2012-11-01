@@ -1,0 +1,122 @@
+<div style="display:none;visibility:hidden;">
+<%= @address_list %>
+</div>
+<h1><small>Welcome, <%= session[:user]["username"]  %></small></h1>
+
+<table class="table">
+	<thead>
+	    <tr>
+	      <th>#</th>
+	      <th>姓名</th>
+	      <th>邮箱</th>
+	      <th>手机号</th>
+	      <th>添加日期</th>
+	    </tr>
+	    <tr>
+	      <th colspan="4" style="border-top:0px;">
+			<input type="text" class="input-large search-query" >
+			<button class="btn" type="submit">搜索</button>
+	      </th>
+	      <th style="border-top:0px;">
+	      	<a class="btn btn-info" href="#createModel" role="button" data-toggle="modal">新建联系人</a>
+	      </th>
+	    </tr>
+	</thead>
+	<tbody>
+	<% @address_list.each_with_index do |address,index| %>
+	 <tr>
+	    <td><%=index%></td>
+	    <td><%= address["name"] %></td>
+	    <td><%= address["email"] %></td>
+	    <td><%= address["cellphone"] %></td>
+	    <td><%= address["createdAt"].slice(0,10) %></td>
+	    <td>
+	    	<input type="hidden" value='<%= address["objectId"] %>' >
+	    	<a class="editModelBtn" href="#editModel" role="button" data-toggle="modal"><i class="icon-edit"></i></a>
+	    	<a class="deleteModelBtn" href="#deleteModel" role="button" data-toggle="modal"><i class="icon-remove"></i></a>
+	    </td>
+	  </tr>
+	<% end %>
+	</tbody>
+</table>
+
+
+<!-- Modal -->
+<div id="createModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">新建联系人</h3>
+  </div>
+  <div class="modal-body">
+    <p></p>
+    <form class="form-signin" method="POST" action="/create">
+    	<input id="name" name="name" type="text" class="input-block-level" placeholder="Last name + First name">
+	    <input id="email" name="email" type="text" class="input-block-level" placeholder="Email address">
+	    <input id="cellphone" name="cellphone" type="text" class="input-block-level" placeholder="Cellphone">
+	</form>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+    <button class="btn btn-primary submit-trigger">保存</button>
+  </div>
+</div>
+<!-- Modal -->
+<div id="editModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">编辑联系人</h3>
+  </div>
+  <div class="modal-body">
+    <p></p>
+    <form class="form-signin" method="POST" action="/edit">
+    	<input type="hidden" id="objectId" name="objectId" >
+    	<input id="name" name="name" type="text" class="input-block-level" placeholder="Last name + First name">
+	    <input id="email" name="email" type="text" class="input-block-level" placeholder="Email address">
+	    <input id="cellphone" name="cellphone" type="text" class="input-block-level" placeholder="Cellphone">
+	</form>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+    <button class="btn btn-primary submit-trigger">保存</button>
+  </div>
+</div>
+<!-- Modal -->
+<div id="deleteModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">删除联系人</h3>
+  </div>
+  <div class="modal-body">
+    <p>确定删除该记录么？(<span id="name"></span>)</p>
+    <form class="form-signin" method="POST" action="/destroy">
+    	<input type="hidden" id="objectId" name="objectId" >
+	</form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+    <button class="btn btn-primary submit-trigger">确定</button>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+		$('.editModelBtn').on('click',function(event){
+			event.preventDefault();
+			var objectId = $(this).prev('input[type=hidden]').val();
+			$('#editModel #objectId').val(objectId);
+		});
+		$('.deleteModelBtn').on('click',function(event){
+			event.preventDefault();
+			var objectId = $(this).prev().prev('input[type=hidden]').val();
+			$('#deleteModel #name').text(objectId);
+			$('#deleteModel #objectId').val(objectId);
+		});
+
+		$('.btn.btn-primary.submit-trigger').on('click',function(event){
+			$(this).parent().prev('.modal-body').find('form').submit();
+		});
+		
+	});
+</script>
